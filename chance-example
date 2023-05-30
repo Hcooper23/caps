@@ -1,0 +1,12 @@
+'use strict';
+
+var Chance = require('chance');
+
+var chance = newChance();
+
+const payload= {
+  store: chance.company(),
+  orderId: chance.orderId(),
+  customer: chance.customer(),
+  address: chance.address(),
+};
