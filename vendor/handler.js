@@ -17,4 +17,7 @@ module.exports = {
     };
     eventPool.emit('pickup', payload);
   },
+  deliveredHandler(payload) {
+    console.log(`VENDOR: Thank you for delivering ${payload.orderId}`);
+  },
 };

@@ -1,18 +1,22 @@
 'use strict';
-const handler = require('./handlerr');
-const eventPool = require('../eventPool');
 
-describe('Vendor Handler', () => {
+const eventPool = require('../eventPool');
+const handler = require('./handler');
+
+describe('Vendor event handler', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should emit pickup event with correct payload', () => {
-    const emitSpy = jest.spyOn(eventPool, 'emit');
+  test('delivered event handler should log the thank you message', () => {
+    const consoleSpy = jest.spyOn(console, 'log');
+    const payload = {
+      orderId: 'e3669048-7313-427b-b6cc-74010ca1f8f0',
+    };
 
-    const store = 'Test Store';
-    handler.emitPickupEvent(store);
+    handler.deliveredHandler(payload);
 
-    expect(emitSpy).toHaveBeenCalledWith('pickup', expect.any(Object));
+    expect(consoleSpy).toHaveBeenCalledWith(`VENDOR: Thank you for delivering ${payload.orderId}`);
   });
 });
+
