@@ -13,12 +13,10 @@ eventPool.on('in-transit', payload => {
 
 module.exports = {
   pickupPackage: payload => {
-    // Perform necessary actions for package pickup
     console.log(`DRIVER: picked up ${payload.orderId}`);
     eventPool.emit('in-transit', payload);
   },
   deliverPackage: payload => {
-    // Perform necessary actions for package delivery
     console.log(`DRIVER: delivered ${payload.orderId}`);
     eventPool.emit('delivered', payload);
   },
