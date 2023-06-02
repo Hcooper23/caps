@@ -1,33 +1,39 @@
 'use strict';
+
 const { Server } = require('socket.io');
+const server = new Server();
+const caps = server.of('/caps');
 
-const io = new Server();
+function logger(event, payload) {
+  const timestamp = new Date().toISOString();
+  console.log('Event:', { event, payload, timestamp });
+}
 
-const capsNamespace = io.of('/caps');
-
-capsNamespace.on('connection', socket => {
+caps.on('connection', socket => {
   console.log('New connection:', socket.id);
-  socket.on('join', room => {
+
+  socket.on('JOIN', room => {
     console.log('Socket joined room:', socket.id, room);
     socket.join(room);
   });
 
   socket.on('pickup', payload => {
-    const timestamp = new Date().toISOString();
-    console.log('Event:', { event: 'pickup', payload, timestamp });
-    socket.broadcast.emit('pickup', payload);
+    logger('pickup', payload);
+    caps.emit('pickup', payload);
   });
 
   socket.on('in-transit', payload => {
-    const timestamp = new Date().toISOString();
-    console.log('Event:', { event: 'in-transit', payload, timestamp });
-    capsNamespace.to(`vendor-${payload.store}`).emit('in-transit', payload);
+    console.log('Hello');
+    logger('in-transit', payload);
+    console.log ('payload stor', payload.store);
+    // caps.emit('delivered', payload);
+    // caps.to(`vendor-${payload.store}`).emit('delivered', payload);
   });
 
   socket.on('delivered', payload => {
-    const timestamp = new Date().toISOString();
-    console.log('Event:', { event: 'delivered', payload, timestamp });
-    capsNamespace.to(`vendor-${payload.store}`).emit('delivered', payload);
+    console.log('HUYGUYDCGHW');
+    logger('delivered', payload);
+    socket.to(payload.store).emit('delivered', payload);
   });
 
   socket.on('disconnect', () => {
@@ -35,6 +41,7 @@ capsNamespace.on('connection', socket => {
   });
 });
 
-const port = 3000;
-console.log(`Server is listening on port ${port}`);
-io.listen(port);
+const port = process.env.PORT || 3001;
+server.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
