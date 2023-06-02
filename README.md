@@ -1,6 +1,6 @@
 Project Name
 
-- LAB: Socket.io
+- LAB: Message Queues
 
 # Author: Hayden Cooper
 
@@ -12,15 +12,21 @@ Code Academy Parcel Service (CAPS)
 
 ## Features and stories
 
-- As a vendor, I want to alert the system when I have a package to be picked up.
+Here are the high level stories related to this new set of requirements.
 
-- As a driver, I want to be notified when there is a package to be delivered.
+- As a vendor, I want to “subscribe” to “delivered” notifications so that I know when my packages are delivered.
+- As a vendor, I want to “catch up” on any “delivered” notifications that I might have missed so that I can see a complete log.
+- As a driver, I want to “subscribe” to “pickup” notifications so that I know what packages to deliver.
+- As a driver, I want to “catch up” on any “pickup” notifications I may have missed so that I can deliver everything.
+- As a driver, I want a way to “scan” a delivery so that the vendors know when a package has been delivered.
 
-- As a driver, I want to alert the system when I have picked up a package and it is in transit.
+And as developers, here are some of the development stories that are newly relevant to the above.
 
-- As a driver, I want to alert the system when a package has been delivered.
-
-- As a vendor, I want to be notified when my package has been delivered.
+- As a developer, I want to create a system of tracking who is subscribing to each event.
+- As a developer, I want to place all inbound messages into a “queue” so that my application knows what events are to be delivered.
+- As a developer, I want to create a system for communicating when events have been delivered and received by subscribers.
+- As a developer, I want to delete messages from the queue after they’ve been received by a subscriber, so that I don’t re-send them.
+- As a developer, I want to create a system for allowing subscribers to retrieve all undelivered messages in their queue.
 
 ## start program
 
@@ -34,4 +40,7 @@ Code Academy Parcel Service (CAPS)
 
 ## UML
 
- ![UML](./Screenshot%202023-05-31%20at%2010.33.20%20PM.png)
+ ![UML](./Screenshot%202023-06-01%20at%209.31.31%20PM.png)
+
+### Collaborators 
+Class 401d53 Code Review and Reece Renninger 
