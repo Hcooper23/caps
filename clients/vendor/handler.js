@@ -1,35 +1,51 @@
 'use strict';
+
 const Chance = require('chance');
 const chance = new Chance();
-const socket = require('../socket.js');
+// const { io } = require('socket.io-client');
 
-socket.on('delivered', payload => {
-  console.log(`Thank you for your order ${payload.customerName}`);
-});
+// const socket = io('http://localhost:3001/caps');
 
-socket.connect('/caps');
+// const orderHandler = (payload = null) => {
+//   if (!payload) {
+//     payload = {
+//       store: chance.company(),
+//       orderId: chance.guid(),
+//       customer: chance.name(),
+//       address: chance.address(),
+//     };
+//   }
 
-const vendorId = '1-206-flowers';
-const room = `vendor-${vendorId}`;
-socket.emit('join', room);
+//   socket.emit('pickup', payload);
+// };
 
-function emitPickupEvent(store) {
+const deliveredHandler = (payload) => {
+  console.log(`VENDOR: Thank you for delivering ${payload.orderId}`);
+};
+
+// socket.on('delivered', deliveredHandler);
+// socket.connect('/caps');
+
+// const vendorId = '1-206-flowers';
+// const room = `vendor-${vendorId}`;
+// socket.emit('', room);
+
+function emitPickupEvent(store, socket) {
   const payload = {
     store: store,
     orderId: chance.guid(),
     customer: chance.name(),
     address: chance.city() + ', ' + chance.state(),
   };
+  console.log('Payload', payload);
   socket.emit('pickup', payload);
 }
 
-setInterval(() => {
-  emitPickupEvent(vendorId);
-}, 5000);
+// setInterval(() => {
+//   emitPickupEvent(vendorId);
+// }, 5000);
 
 module.exports = {
   emitPickupEvent,
-  deliveredHandler(payload) {
-    console.log(`VENDOR: Thank you for delivering ${payload.orderId}`);
-  },
+  deliveredHandler,
 };

@@ -1,63 +1,42 @@
 'use strict';
 
-const handler = require('./handler');
-const { EventEmitter } = require('events');
-const socket = require('../socket');
+const { io } = require('socket.io-client');
+const socket = io('http://localhost:3001/caps');
 
-const eventEmitter = new EventEmitter();
+const pickupPackage = (payload) => {
+  console.log(`DRIVER: picked up ${payload.orderId}`);
+  socket.emit('in-transit', payload);
+};
 
-eventEmitter.on('pickup', payload => {
-  console.log('EVENT:', {
-    event: 'pickup',
-    time: new Date().toISOString(),
-    payload,
-  });
-  handler.pickupPackage(payload);
-});
+const deliverPackage = (payload) => {
+  console.log(`DRIVER: delivered ${payload.orderId}`);
+  socket.emit('delivered', payload);
+};
 
-eventEmitter.on('in-transit', payload => {
-  console.log('EVENT:', {
-    event: 'in-transit',
-    time: new Date().toISOString(),
-    payload,
-  });
-  handler.deliverPackage(payload);
-});
+const handlePickupAndDeliver = (payload) => {
+  setTimeout(() => {
+    pickupPackage(payload);
+  
+  },1000);
+  setTimeout(() => {
+    deliverPackage(payload);
+  },2000);
+};
 
-eventEmitter.on('delivered', payload => {
-  console.log('EVENT:', {
-    event: 'delivered',
-    time: new Date().toISOString(),
-    payload,
-  });
-  console.log(`VENDOR: Thank you for delivering ${payload.orderId}`);
-});
-
-function start() {
-  console.log('DRIVER: Driver module started');
-}
-
-// Connect to the CAPS Application Server using socket.io-client
-socket.connect('/caps');
-
-// Once connected, listen for the 'pickup' event from the Server
-socket.on('pickup', handler.pickupPackage);
-
-// Simulate behavior when receiving a 'pickup' event
-handler.pickupPackage({
-  orderId: '123',
-  customerName: 'John Doe',
-  address: '1234 Main St',
-});
-
-// Simulate behavior when receiving a 'delivered' event
-socket.on('delivered', payload => {
-  console.log(`Thank you for your order ${payload.customerName}`);
-});
+socket.on('pickup', handlePickupAndDeliver);
+// socket.on('in-transit', deliverPackage);
 
 module.exports = {
-  start: start,
-  processEventData: handler.processEventData,
-  emit: eventEmitter.emit.bind(eventEmitter),
-  on: eventEmitter.on.bind(eventEmitter),
-};  
+  pickupPackage,
+  deliverPackage,
+};
+
+// Simulate behavior when receiving a 'pickup' event
+// const samplePayload = {
+//   orderId: '123',
+//   customerName: 'John Doe',
+//   address: '1234 Main St',
+// };
+
+// pickupPackage(samplePayload);
+
